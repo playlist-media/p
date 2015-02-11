@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# Usage: p update
+# Summary: Update p and all plugins
+# Help: Just run `p update`
+
+set -e
+
+header() {
+  echo -e "\033[33m$1\033[0m"
+}
+
+if [ "$1" = "--complete" ]; then
+  exec p-commands
+fi
+
+cd $_P_ROOT
+header "Updating p"
+git pull --rebase
+
+shopt -s nullglob
+
+for plugin in "${_P_ROOT}/plugins"/*/ ; do
+  (
+    echo
+    echo
+    name="$(basename $plugin)"
+    header "Updating p plugin $name"
+    cd $plugin
+    git pull --rebase
+  )
+done
+
+shopt -u nullglob
