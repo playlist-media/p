@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Usage: p deploy-branch [environment]
+#
+# Summary: Deploy the current branch to production (or staging)
+
+stack=$(git config cx.stack 2>/dev/null) || exit 1
+ref=$(git symbolic-ref HEAD 2>/dev/null) || exit 1
+branch="${ref#refs/heads/}"
+environment="${1:-production}"
+
+echo "Deploying branch $branch to $stack ($environment)"
+cx redeploy -s $stack -e $environment --git-ref $branch
